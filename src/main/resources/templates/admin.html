@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <title>Авторизация</title>
+</head>
+<body>
+
+<div class="auth-container" id="authContainer" style="display: none;">
+  <form id="authForm">
+    <div class="form-group">
+      <label for="keyInput">Ключ:</label>
+      <input type="text" class="form-control was-validated" oninput="handleKeyInputChange()" id="keyInput" required>
+      <div class="invalid-feedback">Пожалуйста, введите ключ.</div>
+    </div>
+    <div class="alert alert-danger error-alert" id="errorAlert" role="alert">
+        <strong>Неверный ключ!</strong> Попробуйте еще раз
+    </div>
+    <button type="button" class="btn btn-primary btn-block" onclick="authenticate()">Авторизоваться</button>
+  </form>
+</div>
+
+<div id="loader" class="loader" style="display: none;"></div>
+
+<div id="successContent" style="display: none;">
+  <div style="height: 600px; overflow-y: auto;">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" id="myTabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="requests-tab" data-toggle="tab" href="#requests" role="tab" aria-controls="requests" aria-selected="true">Заявки</a>
+    </li>
+  </ul>
+
+    <div class="tab-pane fade  show active" id="orders" role="tabpanel" aria-labelledby="requests-tab">
+      <!-- Добавьте другие элементы по аналогии -->
+    </div>
+
+    <div class="modal fade" id="requestDataModal" tabindex="-1" role="dialog" aria-labelledby="requestDataModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="requestDataModalLabel">Данные о заявке</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Имя:</strong> <span id="modalName"></span></p>
+            <p><strong>Номер телефона:</strong> <span id="modalPhone"></span></p>
+            <p><strong>Дополнительные данные:</strong> <span id="modalData"></span></p>
+            <p><strong>Дата создания:</strong> <span id="modalDate"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:src="@{/scripts/cookieUtil.js}"></script>
+<script th:src="@{/scripts/admin.js}"></script>
+</body>
+</html>
