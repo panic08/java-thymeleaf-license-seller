@@ -14,11 +14,13 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "/img/**",
                         "/css/**",
                         "/scripts/**",
-                        "/libs/**")
+                        "/libs/**",
+                        "/assets/**")
                 .addResourceLocations(
                         "classpath:/static/img/",
                         "classpath:/static/css/",
                         "classpath:/static/scripts/",
-                        "classpath:/static/libs/");
+                        "classpath:/static/libs/",
+                        "classpath:/static/assets/");
     }
 }

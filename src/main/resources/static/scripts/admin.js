@@ -7,19 +7,28 @@ function checkOnAuthorize(){
 
     formData.append("key", key);
 
-    axios.post('/auth/login', formData)
-        .then(() => {
+    fetch('/auth/login', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok){
+                deleteCookie("jsec");
+                $("#authContainer").show();
+                $("#successContent").hide();
+
+                return;
+            }
             $("#authContainer").hide();
             $("#successContent").show();
-
             handleDataReceive(key);
         })
         .catch(() => {
             deleteCookie("jsec");
-
             $("#authContainer").show();
             $("#successContent").hide();
-        })
+        });
+
 }
 
 if (getCookie("jsec") != null){
@@ -41,20 +50,29 @@ function authenticate() {
         let formData = new FormData();
         formData.append('key', $("#keyInput").val());
 
-        axios.post('http://localhost:8080/auth/login', formData)
+        fetch('/auth/login', {
+            method: 'POST',
+            body: formData
+        })
             .then(response => {
-                setCookie('jsec', response.headers['authorization']);
+                if (!response.ok){
+                    $("#loader").hide();
+                    $('#errorAlert').css('display', 'block');
+                    $("#authContainer").show();
+
+                    return;
+                }
+                const authorizationHeader = response.headers.get('authorization');
+                setCookie('jsec', authorizationHeader);
 
                 $("#loader").hide();
                 $("#authContainer").hide();
                 $("#successContent").show();
-                console.log('Ответ от сервера');
             })
             .catch(error => {
                 $("#loader").hide();
                 $('#errorAlert').css('display', 'block');
                 $("#authContainer").show();
-                console.error('Ошибка:', error);
             });
     }
 }
@@ -63,7 +81,6 @@ function handleKeyInputChange() {
     if ($("#keyInput").val() === "") {
         $("#keyInput").addClass("is-invalid");
     } else {
-        console.log('eee')
         $("#keyInput").removeClass('is-invalid');
         $("#keyInput").addClass("was-validated");
     }
@@ -86,9 +103,14 @@ function showRequestDetails(name, phone, additionalData, date) {
 }
 
 function handleDataReceive(key){
-    axios.get('/order/getAll', {headers: {Authorization: key}})
-        .then(response => {
-            response.data.forEach(element => {
+    fetch('/order/getAll', {
+        headers: {
+            Authorization: key
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(element => {
                 const {id, first_name, phone_number, data, created_at} = element;
 
                 let formattedData = data.substring(0, 35) + '... ';
@@ -105,17 +127,17 @@ function handleDataReceive(key){
 
                 let formattedDate = `${day} ${month} ${year} в ${hours}:${minutes}`;
 
-                let newElement = document.createElement("div");
+                const newElement = document.createElement("div");
                 newElement.classList.add("request-item", "card", "mb-2", "mt-3");
 
                 newElement.innerHTML = `
-        <div data-id="${id}" class="card-body">
-          <h5 class="card-title">${first_name}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">${phone_number}</h6>
-          <p class="card-text">${formattedData} <button class="btn btn-primary btn-sm" onclick="showRequestDetails('${first_name}', '${phone_number}', '${data}', '${formattedDate}')" data-toggle="modal" data-target="#requestDataModal">Подробнее</button></p>
-          <button class="btn btn-danger btn-sm float-right" onclick="deleteOrder(${id})">⨉</button>
-        </div>
-      `;
+                <div data-id="${id}" class="card-body">
+                    <h5 class="card-title">${first_name}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${phone_number}</h6>
+                    <p class="card-text">${formattedData} <button class="btn btn-primary btn-sm" onclick="showRequestDetails('${first_name}', '${phone_number}', '${data}', '${formattedDate}')" data-toggle="modal" data-target="#requestDataModal">Подробнее</button></p>
+                    <button class="btn btn-danger btn-sm float-right" onclick="deleteOrder(${id})">⨉</button>
+                </div>
+            `;
 
                 document.getElementById("orders").appendChild(newElement);
             });
@@ -125,10 +147,12 @@ function handleDataReceive(key){
 function deleteOrder(id){
     let orderElements = document.querySelectorAll('.card-body')
 
-    axios.delete(`/order/${id}`, {headers: {Authorization: getCookie('jsec')}})
-        .then(response => {
-            console.log(response)
-        });
+    fetch(`/order/${id}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: getCookie('jsec')
+        }
+    })
 
     orderElements.forEach(c => {
         if (c.getAttribute('data-id') == id){
