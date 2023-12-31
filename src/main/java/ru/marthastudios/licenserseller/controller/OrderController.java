@@ -30,7 +30,6 @@ public class OrderController {
 
     @PostMapping
     public OrderDto create(@RequestBody @Valid OrderDto orderDto){
-        System.out.println(orderDto.getFirstName() + " " + orderDto.getPhoneNumber() + " " + orderDto.getData());
         return orderService.create(orderDto);
     }
 

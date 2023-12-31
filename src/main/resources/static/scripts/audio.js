@@ -1,3 +1,5 @@
+//The scripts were written by a friend of mine, sorry for the shitty code
+
 const play = document.querySelectorAll(".audio-play-btn");
 
 let interval;

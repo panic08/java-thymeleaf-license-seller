@@ -1,13 +1,17 @@
 const buttons = document.querySelectorAll(".app-order-btn");
 
 const postData = (data) => {
-  fetch("http://94.228.168.236:8080/order", {
+  fetch("/order", {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
     method: "POST",
-    body: JSON.stringify({"first_name": data.first_name, "phone_number": data.phone_number, "data": data.data})
+    body: JSON.stringify({
+      first_name: data.first_name,
+      phone_number: data.phone_number,
+      data: data.data,
+    }),
   });
 };
 
@@ -27,10 +31,10 @@ const submitHandlerClick = (data) => {
     nameBlock.style = "border: none";
   }
   if (
-      phone[0] !== "+" ||
-      phone.length < 10 ||
-      phone.length > 15 ||
-      console.log(phone.replace(/[^+\d]/g, "") !== phone)
+    phone[0] !== "+" ||
+    phone.length < 10 ||
+    phone.length > 15 ||
+    console.log(phone.replace(/[^+\d]/g, "") !== phone)
   ) {
     phoneBlock.style = "border: 2px solid #DC143C;";
     wrong = true;
@@ -84,23 +88,25 @@ const cancelClickHandler = () => {
 };
 
 buttons.forEach((button) =>
-    button.addEventListener("click", buttonClickHandler)
+  button.addEventListener("click", buttonClickHandler)
 );
 
 cancel.addEventListener("click", cancelClickHandler);
 
 const inputHandleChange = (e) => {
-  const test = "+1234567890";
-  if (!test.includes(e.key)) e.preventDefault();
+  e.target.value = e.target.value.replace(/[^+\d]/g, "");
+  if (e.target.value.length === 1)
+    if (e.target.value[0] !== "+") e.target.value = "+" + e.target.value;
+    else if (e.target.value[0] === "+") e.target.value = "";
 };
 
 const input = document.querySelector(".phone");
-input.addEventListener("keypress", inputHandleChange);
+input.addEventListener("input", inputHandleChange);
 
 const inputForm = document.querySelector(".phone-form");
 
 if (inputForm) {
-  inputForm.addEventListener("keypress", inputHandleChange);
+  inputForm.addEventListener("input", inputHandleChange);
 }
 
 const formBtn = document.querySelector(".send-order-submit-btn");

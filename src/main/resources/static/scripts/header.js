@@ -1,4 +1,5 @@
 const city = document.querySelector(".city");
+const cityFooter = document.querySelector(".footer-city")
 const citiesCancel = document.querySelector(".cities-cancel");
 const citiesContainer = document.querySelector(".cities-container");
 const cityChoice = document.querySelectorAll(".cities-grid-item");
@@ -70,11 +71,20 @@ const choiceClickHandler = (text) => {
   citiesContainer.style = "display: none;";
   city.innerHTML = text;
 
+  cityFooter.innerHTML = text;
+
+  const citiesChange = document.querySelectorAll(".city-change");
+
+  citiesChange.forEach(element => {
+    element.innerHTML = map.get(text);
+  });
+
   document.body.style = "overflow: auto";
 
   if (title) {
     setName(text);
   }
+
 };
 
 city.addEventListener("click", cityClickHandler);
@@ -85,9 +95,20 @@ cityChoice.forEach((choice) =>
 
 const init = () => {
   if (localStorage.getItem("city")) {
-    city.innerHTML = localStorage.getItem("city");
+    const cityName = localStorage.getItem("city");
+
+    city.innerHTML = cityName;
+
+    cityFooter.innerHTML = cityName;
+
+    const citiesChange = document.querySelectorAll(".city-change");
+
+    citiesChange.forEach(element => {
+      element.innerHTML = map.get(cityName);
+    });
+
     if (title) {
-      setName(localStorage.getItem("city"));
+      setName(cityName);
     }
   }
 };
